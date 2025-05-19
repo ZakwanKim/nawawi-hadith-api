@@ -1,32 +1,38 @@
 const express = require('express');
+const cors = require('cors');
+const path = require('path');
 const app = express();
-const hadiths = require('./hadiths.json');
 
-app.get('/', (req, res) => {
-  res.json({
-    message: "Welcome to 40 Hadith of Nawawi API",
-    endpoints: {
-      allHadith: "/hadiths",
-      singleHadith: "/hadiths/:id",
-      randomHadith: "/hadiths/random"
-    }
-  });
-});
+const hadiths = require(path.join(__dirname, 'data', 'hadiths.json'));
 
-app.get('/hadiths', (req, res) => {
+app.use(cors());
+
+// Get all hadiths
+app.get('/api/hadiths', (req, res) => {
   res.json(hadiths);
 });
 
-app.get('/hadiths/:id', (req, res) => {
-  const hadith = hadiths.find(h => h.id === parseInt(req.params.id));
-  if (!hadith) return res.status(404).json({ message: "Hadith not found" });
-  res.json(hadith);
+// Get single hadith by number
+app.get('/api/hadiths/:number', (req, res) => {
+  const hadith = hadiths.find(h => h.number == req.params.number);
+  if (hadith) {
+    res.json(hadith);
+  } else {
+    res.status(404).json({ message: 'Hadith not found' });
+  }
 });
 
-app.get('/hadiths/random', (req, res) => {
-  const randomHadith = hadiths[Math.floor(Math.random() * hadiths.length)];
-  res.json(randomHadith);
+// Search hadiths by text
+app.get('/api/hadiths/search/:query', (req, res) => {
+  const query = req.params.query.toLowerCase();
+  const results = hadiths.filter(h => 
+    h.english.toLowerCase().includes(query) || 
+    h.arabic.includes(query)
+  );
+  res.json(results);
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(Server running on port ${PORT}));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
