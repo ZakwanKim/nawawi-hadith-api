@@ -2,11 +2,16 @@
   "name": "nawawi-hadith-api",
   "version": "1.0.0",
   "description": "API for 40 Hadith of Imam Nawawi",
-  "main": "server.js",
+  "main": "index.js",  // Changed from server.js
   "scripts": {
-    "start": "node server.js"
+    "start": "node index.js",  // Changed from server.js
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "cors": "^2.8.5"  // Added missing dependency
+  },
+  "engines": {
+    "node": ">=18.x"  // Recommended for Render
   }
 }
